@@ -54,6 +54,9 @@ import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import java.util.Locale;
 
+import android.view.View;
+import android.widget.TabHost;
+
 /** The activity for the application. */
 public class MainActivity extends AppCompatActivity
     implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
@@ -247,7 +250,7 @@ public class MainActivity extends AppCompatActivity
       }
     }
   }
-
+/** setting up the fragmetnts and tabs*/
   private void setupFragments() {
     mUiLogger = new UiLogger();
     mRealTimePositionVelocityCalculator = new RealTimePositionVelocityCalculator();
@@ -299,7 +302,7 @@ public class MainActivity extends AppCompatActivity
     viewPager.setOffscreenPageLimit(5);
     ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
     viewPager.setAdapter(adapter);
-
+    //Log.d("CREATION",adapter);
     TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
     tabLayout.setTabsFromPagerAdapter(adapter);
 
@@ -310,6 +313,13 @@ public class MainActivity extends AppCompatActivity
     // Use a TabLayout.TabLayoutOnPageChangeListener to forward the scroll and selection changes to
     // this layout
     viewPager.addOnPageChangeListener(new TabLayoutOnPageChangeListener(tabLayout));
+
+    //Remove unnecessary tab for the project
+    tabLayout.removeTabAt(4);
+    tabLayout.removeTabAt(3);
+    tabLayout.removeTabAt(2);
+    //TabHost  tabHost = (TabHost)findViewById(R.id.tab_layout);
+    //tabHost.getTabWidget().getChildAt(4).setVisibility(View.GONE);
   }
 
   private boolean hasPermissions(Activity activity) {
