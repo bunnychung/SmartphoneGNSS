@@ -331,7 +331,7 @@ public class SettingsFragment extends Fragment {
           }
         }
     );
-    Button help = (Button) view.findViewById(R.id.help);
+/*    Button help = (Button) view.findViewById(R.id.help);
     helpDialog = new HelpDialog(getContext());
     helpDialog.setTitle("Help contents");
     helpDialog.create();
@@ -342,7 +342,7 @@ public class SettingsFragment extends Fragment {
           public void onClick(View view) {
             helpDialog.show();
           }
-        });
+        });*/
 
     Button exit = (Button) view.findViewById(R.id.exit);
     exit.setOnClickListener(

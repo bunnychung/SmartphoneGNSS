@@ -67,10 +67,10 @@ public class MainActivity extends AppCompatActivity
   private static final int NUMBER_OF_FRAGMENTS = 6;
   private static final int FRAGMENT_INDEX_SETTING = 0;
   private static final int FRAGMENT_INDEX_LOGGER = 1;
-  private static final int FRAGMENT_INDEX_RESULT = 2;
+  private static final int FRAGMENT_INDEX_RESULT = 5;
   private static final int FRAGMENT_INDEX_MAP = 3;
   private static final int FRAGMENT_INDEX_AGNSS = 4;
-  private static final int FRAGMENT_INDEX_PLOT = 5;
+  private static final int FRAGMENT_INDEX_PLOT = 2;
   private static final String TAG = "MainActivity";
 
   private GnssContainer mGnssContainer;
@@ -227,7 +227,9 @@ public class MainActivity extends AppCompatActivity
         case FRAGMENT_INDEX_LOGGER:
           return getString(R.string.title_log).toUpperCase(locale);
         case FRAGMENT_INDEX_RESULT:
-          return getString(R.string.title_offset).toUpperCase(locale);
+          //now is plot
+          return getString(R.string.title_plot).toLowerCase(locale);
+          //return getString(R.string.title_offset).toUpperCase(locale);
         case FRAGMENT_INDEX_MAP:
           return getString(R.string.title_map).toUpperCase(locale);
         case FRAGMENT_INDEX_AGNSS:

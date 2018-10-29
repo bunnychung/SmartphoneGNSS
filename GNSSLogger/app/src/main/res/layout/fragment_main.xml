@@ -169,13 +169,13 @@
         android:layout_above="@+id/sw_and_info"
         android:orientation="horizontal">
 
-      <Button
-          android:id="@+id/help"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:singleLine="true"
-          android:text="@string/help" />
+      <!--<Button-->
+          <!--android:id="@+id/help"-->
+          <!--android:layout_width="0dp"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_weight="1"-->
+          <!--android:singleLine="true"-->
+          <!--android:text="@string/help" />-->
 
       <Button
           android:id="@+id/exit"

@@ -16,6 +16,7 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
+import static android.support.v4.util.Preconditions.checkState;
 import static com.google.common.base.Preconditions.checkState;
 
 import android.app.Activity;
