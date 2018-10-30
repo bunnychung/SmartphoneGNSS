@@ -352,8 +352,9 @@ public class FileLogger implements GnssListener {
   private void writeGnssMeasurementToFile(GnssClock clock, GnssMeasurement measurement)
       throws IOException {
     String clockStream =
-        String.format(
-            "Raw,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+        String.format("%s,%s",
+            SystemClock.elapsedRealtime(),clock.getTimeNanos())
+            /*"Raw,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
             SystemClock.elapsedRealtime(),
             clock.getTimeNanos(),
             clock.hasLeapSecond() ? clock.getLeapSecond() : "",
@@ -365,7 +366,7 @@ public class FileLogger implements GnssListener {
             clock.hasDriftUncertaintyNanosPerSecond()
                 ? clock.getDriftUncertaintyNanosPerSecond()
                 : "",
-            clock.getHardwareClockDiscontinuityCount() + ",");
+            clock.getHardwareClockDiscontinuityCount() + ",")*/;
     mFileWriter.write(clockStream);
 
     //get measurement for satellite id and CNR
