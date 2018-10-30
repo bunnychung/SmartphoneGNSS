@@ -114,7 +114,7 @@ public class FileLogger implements GnssListener {
 
       // initialize the contents of the file
       try {
-        currentFileWriter.write(COMMENT_START);
+        /*currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.write("Header Description:");
@@ -163,7 +163,8 @@ public class FileLogger implements GnssListener {
         currentFileWriter.write("Nav,Svid,Type,Status,MessageId,Sub-messageId,Data(Bytes)");
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
-        currentFileWriter.newLine();
+        currentFileWriter.newLine();*/
+        currentFileWriter.write("clock1,clock2,Svid,Cn0Dbz");
       } catch (IOException e) {
         logException("Count not initialize file: " + currentFilePath, e);
         return;
@@ -367,9 +368,10 @@ public class FileLogger implements GnssListener {
             clock.getHardwareClockDiscontinuityCount() + ",");
     mFileWriter.write(clockStream);
 
+    //get measurement for satellite id and CNR
     String measurementStream =
-        String.format(
-            "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+        String.format("%s,%s",measurement.getSvid(),measurement.getCn0DbHz())
+/*            "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
             measurement.getSvid(),
             measurement.getTimeOffsetNanos(),
             measurement.getState(),
@@ -385,16 +387,16 @@ public class FileLogger implements GnssListener {
             measurement.hasCarrierCycles() ? measurement.getCarrierCycles() : "",
             measurement.hasCarrierPhase() ? measurement.getCarrierPhase() : "",
             measurement.hasCarrierPhaseUncertainty()
-                ? measurement.getCarrierPhaseUncertainty()
-                : "",
+                    ? measurement.getCarrierPhaseUncertainty()
+                    : "",
             measurement.getMultipathIndicator(),
             measurement.hasSnrInDb() ? measurement.getSnrInDb() : "",
             measurement.getConstellationType(),
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-            && measurement.hasAutomaticGainControlLevelDb()
-                ? measurement.getAutomaticGainControlLevelDb()
-                : "",
-            measurement.hasCarrierFrequencyHz() ? measurement.getCarrierFrequencyHz() : "");
+                    && measurement.hasAutomaticGainControlLevelDb()
+                    ? measurement.getAutomaticGainControlLevelDb()
+                    : "",
+            measurement.hasCarrierFrequencyHz() ? measurement.getCarrierFrequencyHz() : "")*/;
     mFileWriter.write(measurementStream);
     mFileWriter.newLine();
   }
