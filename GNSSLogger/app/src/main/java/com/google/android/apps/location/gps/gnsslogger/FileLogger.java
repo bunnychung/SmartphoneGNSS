@@ -46,6 +46,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.os.Bundle;
+import android.util.Log;
 /**
  * A GNSS logger to store information to a file.
  */
@@ -79,7 +81,10 @@ public class FileLogger implements GnssListener {
 
   public FileLogger(Context context) {
     this.mContext = context;
+
   }
+
+  public GnssStatus gnssStatus;
 
   /**
    * Start a new file logging process.
@@ -165,6 +170,7 @@ public class FileLogger implements GnssListener {
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();*/
         currentFileWriter.write("clock1,clock2,Svid,Cn0Dbz");
+        currentFileWriter.newLine();
       } catch (IOException e) {
         logException("Count not initialize file: " + currentFilePath, e);
         return;
@@ -325,8 +331,34 @@ public class FileLogger implements GnssListener {
   public void onGnssNavigationMessageStatusChanged(int status) {}
 
   @Override
-  public void onGnssStatusChanged(GnssStatus gnssStatus) {}
-
+  public void onGnssStatusChanged(GnssStatus gnssStatus) {
+      synchronized (mFileLock) {
+          if (mFileWriter == null) {
+              return;
+          }
+          StringBuilder builder = new StringBuilder("SATELLITE_STATUS | [Satellites:\n");
+          for (int i = 0; i < gnssStatus.getSatelliteCount(); i++) {
+              builder
+                      /*.append("Constellation = ")
+                      .append(getConstellationName(gnssStatus.getConstellationType(i)))*/
+                      .append(", ");
+              builder.append("Svid = ").append(gnssStatus.getSvid(i)).append(", ");
+              builder.append("Cn0DbHz = ").append(gnssStatus.getCn0DbHz(i)).append(", ");
+              builder.append("Elevation = ").append(gnssStatus.getElevationDegrees(i)).append(", ");
+              builder.append("Azimuth = ").append(gnssStatus.getAzimuthDegrees(i)).append(", ");
+              builder.append("hasEphemeris = ").append(gnssStatus.hasEphemerisData(i)).append(", ");
+              builder.append("hasAlmanac = ").append(gnssStatus.hasAlmanacData(i)).append(", ");
+              builder.append("usedInFix = ").append(gnssStatus.usedInFix(i)).append("\n");
+          }
+          builder.append("]");
+          try {
+              mFileWriter.write(builder.toString());
+              mFileWriter.newLine();
+          } catch (IOException e) {
+              logException(ERROR_WRITING_FILE, e);
+          }
+      }
+  }
   @Override
   public void onNmeaReceived(long timestamp, String s) {
     synchronized (mFileLock) {
@@ -353,7 +385,7 @@ public class FileLogger implements GnssListener {
       throws IOException {
     String clockStream =
         String.format("%s,%s",
-            SystemClock.elapsedRealtime(),clock.getTimeNanos())
+            SystemClock.elapsedRealtime(),clock.getTimeNanos()+",")
             /*"Raw,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
             SystemClock.elapsedRealtime(),
             clock.getTimeNanos(),
@@ -367,7 +399,7 @@ public class FileLogger implements GnssListener {
                 ? clock.getDriftUncertaintyNanosPerSecond()
                 : "",
             clock.getHardwareClockDiscontinuityCount() + ",")*/;
-    mFileWriter.write(clockStream);
+    //mFileWriter.write(clockStream);
 
     //get measurement for satellite id and CNR
     String measurementStream =
@@ -400,6 +432,19 @@ public class FileLogger implements GnssListener {
             measurement.hasCarrierFrequencyHz() ? measurement.getCarrierFrequencyHz() : "")*/;
     mFileWriter.write(measurementStream);
     mFileWriter.newLine();
+/*    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < gnssStatus.getSatelliteCount(); i++) {
+
+      builder.append(gnssStatus.getSvid(i)).append(", ");
+      builder.append(gnssStatus.getCn0DbHz(i)).append(", ");
+      builder.append("Elevation = ").append(gnssStatus.getElevationDegrees(i)).append(", ");
+      builder.append("Azimuth = ").append(gnssStatus.getAzimuthDegrees(i)).append(", ");
+      builder.append("\n");
+    }
+    Log.d("STATE",builder.toString());
+    Log.d("myWTFTag","WHAT THE FUC<k");
+    mFileWriter.write(builder.toString());*/
+
   }
 
   private void logException(String errorMessage, Exception e) {
