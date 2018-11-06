@@ -169,7 +169,7 @@ public class FileLogger implements GnssListener {
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();*/
-        currentFileWriter.write("clock1,clock2,Svid,Cn0Dbz");
+        currentFileWriter.write("SvID,Cn0Dbz,Elevation,Azimuth");
         currentFileWriter.newLine();
       } catch (IOException e) {
         logException("Count not initialize file: " + currentFilePath, e);
@@ -338,17 +338,18 @@ public class FileLogger implements GnssListener {
           }
           StringBuilder builder = new StringBuilder("SATELLITE_STATUS | [Satellites:\n");
           for (int i = 0; i < gnssStatus.getSatelliteCount(); i++) {
-              builder
-                      /*.append("Constellation = ")
-                      .append(getConstellationName(gnssStatus.getConstellationType(i)))*/
-                      .append(", ");
+/*              builder
+                      .append("Constellation = ")
+                      *//*.append(getConstellationName(gnssStatus.getConstellationType(i)))**//*
+                      .append(", ");*/
               builder.append("Svid = ").append(gnssStatus.getSvid(i)).append(", ");
               builder.append("Cn0DbHz = ").append(gnssStatus.getCn0DbHz(i)).append(", ");
               builder.append("Elevation = ").append(gnssStatus.getElevationDegrees(i)).append(", ");
               builder.append("Azimuth = ").append(gnssStatus.getAzimuthDegrees(i)).append(", ");
-              builder.append("hasEphemeris = ").append(gnssStatus.hasEphemerisData(i)).append(", ");
+
+/*              builder.append("hasEphemeris = ").append(gnssStatus.hasEphemerisData(i)).append(", ");
               builder.append("hasAlmanac = ").append(gnssStatus.hasAlmanacData(i)).append(", ");
-              builder.append("usedInFix = ").append(gnssStatus.usedInFix(i)).append("\n");
+              builder.append("usedInFix = ").append(gnssStatus.usedInFix(i)).append("\n");*/
           }
           builder.append("]");
           try {
@@ -385,65 +386,16 @@ public class FileLogger implements GnssListener {
       throws IOException {
     String clockStream =
         String.format("%s,%s",
-            SystemClock.elapsedRealtime(),clock.getTimeNanos()+",")
-            /*"Raw,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
-            SystemClock.elapsedRealtime(),
-            clock.getTimeNanos(),
-            clock.hasLeapSecond() ? clock.getLeapSecond() : "",
-            clock.hasTimeUncertaintyNanos() ? clock.getTimeUncertaintyNanos() : "",
-            clock.getFullBiasNanos(),
-            clock.hasBiasNanos() ? clock.getBiasNanos() : "",
-            clock.hasBiasUncertaintyNanos() ? clock.getBiasUncertaintyNanos() : "",
-            clock.hasDriftNanosPerSecond() ? clock.getDriftNanosPerSecond() : "",
-            clock.hasDriftUncertaintyNanosPerSecond()
-                ? clock.getDriftUncertaintyNanosPerSecond()
-                : "",
-            clock.getHardwareClockDiscontinuityCount() + ",")*/;
+            SystemClock.elapsedRealtime(),clock.getTimeNanos()+",");
+
     //mFileWriter.write(clockStream);
 
     //get measurement for satellite id and CNR
     String measurementStream =
-        String.format("%s,%s",measurement.getSvid(),measurement.getCn0DbHz())
-/*            "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
-            measurement.getSvid(),
-            measurement.getTimeOffsetNanos(),
-            measurement.getState(),
-            measurement.getReceivedSvTimeNanos(),
-            measurement.getReceivedSvTimeUncertaintyNanos(),
-            measurement.getCn0DbHz(),
-            measurement.getPseudorangeRateMetersPerSecond(),
-            measurement.getPseudorangeRateUncertaintyMetersPerSecond(),
-            measurement.getAccumulatedDeltaRangeState(),
-            measurement.getAccumulatedDeltaRangeMeters(),
-            measurement.getAccumulatedDeltaRangeUncertaintyMeters(),
-            measurement.hasCarrierFrequencyHz() ? measurement.getCarrierFrequencyHz() : "",
-            measurement.hasCarrierCycles() ? measurement.getCarrierCycles() : "",
-            measurement.hasCarrierPhase() ? measurement.getCarrierPhase() : "",
-            measurement.hasCarrierPhaseUncertainty()
-                    ? measurement.getCarrierPhaseUncertainty()
-                    : "",
-            measurement.getMultipathIndicator(),
-            measurement.hasSnrInDb() ? measurement.getSnrInDb() : "",
-            measurement.getConstellationType(),
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                    && measurement.hasAutomaticGainControlLevelDb()
-                    ? measurement.getAutomaticGainControlLevelDb()
-                    : "",
-            measurement.hasCarrierFrequencyHz() ? measurement.getCarrierFrequencyHz() : "")*/;
-    mFileWriter.write(measurementStream);
-    mFileWriter.newLine();
-/*    StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < gnssStatus.getSatelliteCount(); i++) {
+        String.format("%s,%s",measurement.getSvid(),measurement.getCn0DbHz());
 
-      builder.append(gnssStatus.getSvid(i)).append(", ");
-      builder.append(gnssStatus.getCn0DbHz(i)).append(", ");
-      builder.append("Elevation = ").append(gnssStatus.getElevationDegrees(i)).append(", ");
-      builder.append("Azimuth = ").append(gnssStatus.getAzimuthDegrees(i)).append(", ");
-      builder.append("\n");
-    }
-    Log.d("STATE",builder.toString());
-    Log.d("myWTFTag","WHAT THE FUC<k");
-    mFileWriter.write(builder.toString());*/
+    //mFileWriter.write(measurementStream);
+   // mFileWriter.newLine();
 
   }
 
