@@ -336,25 +336,26 @@ public class FileLogger implements GnssListener {
           if (mFileWriter == null) {
               return;
           }
-          StringBuilder builder = new StringBuilder("SATELLITE_STATUS | [Satellites:\n");
+          StringBuilder builder = new StringBuilder();
           for (int i = 0; i < gnssStatus.getSatelliteCount(); i++) {
 /*              builder
                       .append("Constellation = ")
                       *//*.append(getConstellationName(gnssStatus.getConstellationType(i)))**//*
                       .append(", ");*/
-              builder.append("Svid = ").append(gnssStatus.getSvid(i)).append(", ");
-              builder.append("Cn0DbHz = ").append(gnssStatus.getCn0DbHz(i)).append(", ");
-              builder.append("Elevation = ").append(gnssStatus.getElevationDegrees(i)).append(", ");
-              builder.append("Azimuth = ").append(gnssStatus.getAzimuthDegrees(i)).append(", ");
+              builder.append(gnssStatus.getSvid(i)).append(",");
+              builder.append(gnssStatus.getCn0DbHz(i)).append(",");
+              builder.append(gnssStatus.getElevationDegrees(i)).append(",");
+              builder.append(gnssStatus.getAzimuthDegrees(i));
+              builder.append("\n");
 
 /*              builder.append("hasEphemeris = ").append(gnssStatus.hasEphemerisData(i)).append(", ");
               builder.append("hasAlmanac = ").append(gnssStatus.hasAlmanacData(i)).append(", ");
               builder.append("usedInFix = ").append(gnssStatus.usedInFix(i)).append("\n");*/
           }
-          builder.append("]");
+
           try {
               mFileWriter.write(builder.toString());
-              mFileWriter.newLine();
+              //mFileWriter.newLine();
           } catch (IOException e) {
               logException(ERROR_WRITING_FILE, e);
           }
