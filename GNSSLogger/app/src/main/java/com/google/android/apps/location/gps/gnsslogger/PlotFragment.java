@@ -53,7 +53,14 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.achartengine.util.MathHelper;
-
+//new imports for testing
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileWriter;
+import java.io.IOException;
+import android.os.Bundle;
+import android.os.Environment;
 /** A plot fragment to show real-time Gnss analysis migrated from GnssAnalysis Tool. */
 public class PlotFragment extends Fragment {
 

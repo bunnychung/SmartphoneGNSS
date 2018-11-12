@@ -69,6 +69,8 @@ public class FileLogger implements GnssListener {
   private BufferedWriter mFileWriter;
   private File mFile;
 
+  public long baseTime = 0;
+
   private UIFragmentComponent mUiComponent;
 
   public synchronized UIFragmentComponent getUiComponent() {
@@ -106,7 +108,7 @@ public class FileLogger implements GnssListener {
 
       SimpleDateFormat formatter = new SimpleDateFormat("yyy_MM_dd_HH_mm_ss");
       Date now = new Date();
-      String fileName = String.format("%s_%s.txt", FILE_PREFIX, formatter.format(now));
+      String fileName = String.format("%s.txt", FILE_PREFIX/*, formatter.format(now)*/);
       File currentFile = new File(baseDirectory, fileName);
       String currentFilePath = currentFile.getAbsolutePath();
       BufferedWriter currentFileWriter;
@@ -215,7 +217,7 @@ public class FileLogger implements GnssListener {
     if (mFile == null) {
       return;
     }
-
+    baseTime = 0;
     Intent emailIntent = new Intent(Intent.ACTION_SEND);
     emailIntent.setType("*/*");
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "SensorLog");
@@ -281,6 +283,10 @@ public class FileLogger implements GnssListener {
         return;
       }
       GnssClock gnssClock = event.getClock();
+
+      if (baseTime == 0){
+        baseTime = SystemClock.elapsedRealtime();
+      }
       for (GnssMeasurement measurement : event.getMeasurements()) {
         try {
           writeGnssMeasurementToFile(gnssClock, measurement);
@@ -387,16 +393,17 @@ public class FileLogger implements GnssListener {
       throws IOException {
     String clockStream =
         String.format("%s,%s",
-            SystemClock.elapsedRealtime(),clock.getTimeNanos()+",");
+            SystemClock.elapsedRealtime()-baseTime,clock.getTimeNanos()+",");
 
-    //mFileWriter.write(clockStream);
+
+    mFileWriter.write(clockStream);
 
     //get measurement for satellite id and CNR
     String measurementStream =
         String.format("%s,%s",measurement.getSvid(),measurement.getCn0DbHz());
 
-    //mFileWriter.write(measurementStream);
-   // mFileWriter.newLine();
+    mFileWriter.write(measurementStream);
+    mFileWriter.newLine();
 
   }
 
