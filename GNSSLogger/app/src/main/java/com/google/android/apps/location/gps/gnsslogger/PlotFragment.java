@@ -61,6 +61,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import android.os.Bundle;
 import android.os.Environment;
+
+
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import com.aurelhubert.polarchart.PolarChart;
+
+import java.util.ArrayList;
 /** A plot fragment to show real-time Gnss analysis migrated from GnssAnalysis Tool. */
 public class PlotFragment extends Fragment {
 
@@ -109,7 +121,7 @@ public class PlotFragment extends Fragment {
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View plotView = inflater.inflate(R.layout.fragment_plot, container, false /* attachToRoot */);
-
+    initUI(plotView);
     mDataSetManager
         = new DataSetManager(NUMBER_OF_TABS, NUMBER_OF_CONSTELLATIONS, getContext(), mColorMap);
 
@@ -134,6 +146,7 @@ public class PlotFragment extends Fragment {
         mLayout.removeAllViews();
         mChartView = ChartFactory.getLineChartView(getContext(), dataSet, renderer);
         mLayout.addView(mChartView);
+
       }
 
       @Override
@@ -470,5 +483,48 @@ public class PlotFragment extends Fragment {
           .getStringArray(R.array.plot_titles)[tabNumber]);
       renderer.setChartTitleTextSize(50);
     }
+  }
+  private void initUI(View plotView){
+    final PolarChart polarChart = (PolarChart) plotView.findViewById(R.id.polar_chart);
+    int i =100;
+    float b = 1;
+// Number of sections
+    polarChart.setNbSections(i);
+// Number of circles
+    polarChart.setNbCircles(100);
+
+// Set data
+    final ArrayList<Float> values = new ArrayList<>();
+    for (int a = 0;a<100;a++){
+      values.add(b);
+      b = b+ 1;
+    }
+
+
+// Set the values with animation (or not)
+    polarChart.setSectionsValue(values, true);
+
+// Use Bezier curve or classic path
+    polarChart.setUseBezierCurve(true);
+
+// Set the value when touching the graph
+    polarChart.setCanChangeValue(true);
+
+// Display the value of the section when touched
+    polarChart.setDisplayTouchValue(true);
+
+// Define custom Paint
+    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    paint.setStyle(Paint.Style.FILL_AND_STROKE);
+    paint.setColor(Color.parseColor("#2196F3"));
+    polarChart.setShapePaint(paint);
+
+// Activate onTouchListener and add valueChanged listener
+/*    polarChart.setPolarChartListener(new PolarChart.PolarChartListener() {
+      @Override
+      public void onValueChanged(int section, float value) {
+        Log.d("PolarChart", "onValueChanged: " + section + " / " + value);
+      }
+    });*/
   }
 }

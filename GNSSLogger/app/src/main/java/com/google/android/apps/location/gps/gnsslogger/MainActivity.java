@@ -57,6 +57,19 @@ import java.util.Locale;
 import android.view.View;
 import android.widget.TabHost;
 
+
+
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import com.aurelhubert.polarchart.PolarChart;
+
+import java.util.ArrayList;
+
 /** The activity for the application. */
 public class MainActivity extends AppCompatActivity
     implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
@@ -142,6 +155,8 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     buildGoogleApiClient();
     requestPermissionAndSetupFragments(this);
+
+
   }
 
   protected PendingIntent createActivityDetectionPendingIntent() {
@@ -322,6 +337,7 @@ public class MainActivity extends AppCompatActivity
     tabLayout.removeTabAt(2);
     //TabHost  tabHost = (TabHost)findViewById(R.id.tab_layout);
     //tabHost.getTabWidget().getChildAt(4).setVisibility(View.GONE);
+    //initUI();
   }
 
   private boolean hasPermissions(Activity activity) {
@@ -388,5 +404,47 @@ public class MainActivity extends AppCompatActivity
             RealTimePositionVelocityCalculator.RESIDUAL_MODE_MOVING, null);
       }
     }
+  }
+
+  private void initUI(){
+    final PolarChart polarChart = (PolarChart) findViewById(R.id.polar_chart);
+
+// Number of sections
+    polarChart.setNbSections(8);
+// Number of circles
+    polarChart.setNbCircles(5);
+
+// Set data
+    final ArrayList<Float> values = new ArrayList<>();
+    values.add(4f);
+    values.add(3f);
+    values.add(5f);
+    values.add(2.3f);
+    values.add(4.3f);
+    values.add(3.3f);
+    values.add(2.4f);
+    values.add(1.2f);
+
+// Set the values with animation (or not)
+    polarChart.setSectionsValue(values, true);
+
+// Use Bezier curve or classic path
+    polarChart.setUseBezierCurve(true);
+
+// Set the value when touching the graph
+    polarChart.setCanChangeValue(true);
+
+// Display the value of the section when touched
+    polarChart.setDisplayTouchValue(true);
+
+// Define custom Paint
+    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    paint.setStyle(Paint.Style.FILL_AND_STROKE);
+    paint.setColor(Color.parseColor("#2196F3"));
+    polarChart.setShapePaint(paint);
+
+// Activate onTouchListener and add valueChanged listener
+
+
   }
 }

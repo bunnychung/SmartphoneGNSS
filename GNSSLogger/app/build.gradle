@@ -46,5 +46,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:11.0.2'
     compile project(':pseudorange')
     compile files('libs/achartengine-1.2.0.jar')
+    compile 'com.aurelhubert:polarchart:0.1.1'
 }
 
