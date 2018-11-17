@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity
   private static final int FRAGMENT_INDEX_AGNSS = 4;
   private static final int FRAGMENT_INDEX_PLOT = 2;
   private static final String TAG = "MainActivity";
+  private String bitch ="bitch that.com";
 
   private GnssContainer mGnssContainer;
   private UiLogger mUiLogger;
