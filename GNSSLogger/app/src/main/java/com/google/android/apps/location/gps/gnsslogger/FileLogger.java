@@ -247,7 +247,7 @@ public class FileLogger implements GnssListener {
 
   @Override
   public void onLocationChanged(Location location) {
-    if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+    /*if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
       synchronized (mFileLock) {
         if (mFileWriter == null) {
           return;
@@ -270,7 +270,7 @@ public class FileLogger implements GnssListener {
           logException(ERROR_WRITING_FILE, e);
         }
       }
-    }
+    }*/
   }
 
   @Override

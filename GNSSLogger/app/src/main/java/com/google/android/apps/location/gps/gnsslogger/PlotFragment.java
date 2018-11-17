@@ -37,6 +37,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.google.location.lbs.gnss.gps.pseudorange.GpsNavigationMessageStore;
+
+import java.io.FileReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -71,6 +73,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.aurelhubert.polarchart.PolarChart;
+
+// for wr9ting file
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import java.util.ArrayList;
 /** A plot fragment to show real-time Gnss analysis migrated from GnssAnalysis Tool. */
@@ -121,7 +143,8 @@ public class PlotFragment extends Fragment {
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View plotView = inflater.inflate(R.layout.fragment_plot, container, false /* attachToRoot */);
-    initUI(plotView);
+    //initUI(plotView); plotting initialz file
+      openFile();
     mDataSetManager
         = new DataSetManager(NUMBER_OF_TABS, NUMBER_OF_CONSTELLATIONS, getContext(), mColorMap);
 
@@ -484,47 +507,50 @@ public class PlotFragment extends Fragment {
       renderer.setChartTitleTextSize(50);
     }
   }
-  private void initUI(View plotView){
-    final PolarChart polarChart = (PolarChart) plotView.findViewById(R.id.polar_chart);
-    int i =100;
-    float b = 1;
-// Number of sections
-    polarChart.setNbSections(i);
-// Number of circles
-    polarChart.setNbCircles(100);
-
-// Set data
-    final ArrayList<Float> values = new ArrayList<>();
-    for (int a = 0;a<100;a++){
-      values.add(b);
-      b = b+ 1;
-    }
 
 
-// Set the values with animation (or not)
-    polarChart.setSectionsValue(values, true);
 
-// Use Bezier curve or classic path
-    polarChart.setUseBezierCurve(true);
 
-// Set the value when touching the graph
-    polarChart.setCanChangeValue(true);
-
-// Display the value of the section when touched
-    polarChart.setDisplayTouchValue(true);
-
-// Define custom Paint
-    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    paint.setStyle(Paint.Style.FILL_AND_STROKE);
-    paint.setColor(Color.parseColor("#2196F3"));
-    polarChart.setShapePaint(paint);
-
-// Activate onTouchListener and add valueChanged listener
-/*    polarChart.setPolarChartListener(new PolarChart.PolarChartListener() {
-      @Override
-      public void onValueChanged(int section, float value) {
-        Log.d("PolarChart", "onValueChanged: " + section + " / " + value);
-      }
-    });*/
+private void openFile(){
+  File baseDirectory;
+  String state = Environment.getExternalStorageState();
+  Log.d("STATE",state);
+  if (Environment.MEDIA_MOUNTED.equals(state)) {
+    baseDirectory = new File(Environment.getExternalStorageDirectory(), "gnss_log");
+    baseDirectory.mkdirs();
+  } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+      Log.d("STATE","can't write");
+    return;
+  } else {
+      Log.d("STATE","can't read");
+    return;
   }
+
+//Get the text file
+  File file = new File(baseDirectory,"gnss_log.txt");
+
+//Read text from file
+  StringBuilder text = new StringBuilder();
+    List<String> mLines = new ArrayList<>();
+  try {
+    BufferedReader br = new BufferedReader(new FileReader(file));
+    String line;
+
+    while ((line = br.readLine()) != null) {
+      text.append(line);
+      text.append('\n');
+      mLines.add(line);
+    }
+    br.close();
+  }
+  catch (IOException e) {
+    //You'll need to add proper error handling here
+  }
+  //TextView tv = (TextView)findViewById(R.id.text_view);
+    // tv.setText(text.toString());
+    //Log.d("MSG",text.toString());
+    for (String string : mLines) {
+        Log.d("MSG", string);
+    }
+}
 }

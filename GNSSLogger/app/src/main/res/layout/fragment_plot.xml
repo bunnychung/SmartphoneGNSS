@@ -39,10 +39,10 @@
       android:text="@string/turn_on_location_measurement"
       android:layout_weight="1"/>
 
-  <com.aurelhubert.polarchart.PolarChart
+<!--  <com.aurelhubert.polarchart.PolarChart
       android:id="@+id/polar_chart"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:nb_circles="8"
-      app:nb_sections="12" />
+      app:nb_sections="12" />-->
 </LinearLayout>
