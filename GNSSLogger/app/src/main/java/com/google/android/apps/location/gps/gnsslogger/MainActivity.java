@@ -57,35 +57,22 @@ import java.util.Locale;
 import android.view.View;
 import android.widget.TabHost;
 
-
-
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import com.aurelhubert.polarchart.PolarChart;
-
-import java.util.ArrayList;
-
 /** The activity for the application. */
 public class MainActivity extends AppCompatActivity
-    implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
+        implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
   private static final int LOCATION_REQUEST_ID = 1;
   private static final String[] REQUIRED_PERMISSIONS = {
-    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE
+          Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE
   };
-  private static final int NUMBER_OF_FRAGMENTS = 6;
+  private static final int NUMBER_OF_FRAGMENTS = 7;
   private static final int FRAGMENT_INDEX_SETTING = 0;
   private static final int FRAGMENT_INDEX_LOGGER = 1;
   private static final int FRAGMENT_INDEX_RESULT = 5;
-  private static final int FRAGMENT_INDEX_MAP = 3;
+  private static final int FRAGMENT_INDEX_MAP = 6;
   private static final int FRAGMENT_INDEX_AGNSS = 4;
-  private static final int FRAGMENT_INDEX_PLOT = 2;
+  private static final int FRAGMENT_INDEX_PLOT = 3;
+  private static final int FRAGMENT_INDEX_UPLOAD = 2;
   private static final String TAG = "MainActivity";
-  private String bitch ="bitch that.com";
 
   private GnssContainer mGnssContainer;
   private UiLogger mUiLogger;
@@ -96,35 +83,39 @@ public class MainActivity extends AppCompatActivity
   private GoogleApiClient mGoogleApiClient;
   private boolean mAutoSwitchGroundTruthMode;
   private final ActivityDetectionBroadcastReceiver mBroadcastReceiver =
-      new ActivityDetectionBroadcastReceiver();
+          new ActivityDetectionBroadcastReceiver();
 
   private ServiceConnection mConnection =
-      new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-          // Empty
-        }
+          new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+              // Empty
+            }
 
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-          // Empty
-        }
-      };
+            @Override
+            public void onServiceDisconnected(ComponentName className) {
+              // Empty
+            }
+          };
 
   @Override
   protected void onStart() {
     super.onStart();
     // Bind to the timer service to ensure it is available when app is running
     bindService(new Intent(this, TimerService.class), mConnection, Context.BIND_AUTO_CREATE);
+    bindService(new Intent(this, LoggerFragment.class), mConnection, Context.BIND_AUTO_CREATE);
   }
 
   @Override
   protected void onResume() {
     super.onResume();
     LocalBroadcastManager.getInstance(this)
-        .registerReceiver(
-            mBroadcastReceiver, new IntentFilter(
-                DetectedActivitiesIntentReceiver.AR_RESULT_BROADCAST_ACTION));
+            .registerReceiver(
+                    mBroadcastReceiver, new IntentFilter(
+                            DetectedActivitiesIntentReceiver.AR_RESULT_BROADCAST_ACTION));
+    bindService(new Intent(this, LoggerFragment.class), mConnection, Context.BIND_AUTO_CREATE);
+
+
   }
 
   @Override
@@ -136,19 +127,20 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onStop() {
     super.onStop();
-    unbindService(mConnection);
+    // unbindService(mConnection);
   }
 
   @Override
   protected void onDestroy(){
     mGnssContainer.unregisterAll();
     super.onDestroy();
+    unbindService(mConnection);
   }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     SharedPreferences sharedPreferences = PreferenceManager.
-        getDefaultSharedPreferences(this);
+            getDefaultSharedPreferences(this);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putBoolean(SettingsFragment.PREFERENCE_KEY_AUTO_SCROLL, false);
     editor.commit();
@@ -156,8 +148,6 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     buildGoogleApiClient();
     requestPermissionAndSetupFragments(this);
-
-
   }
 
   protected PendingIntent createActivityDetectionPendingIntent() {
@@ -167,12 +157,12 @@ public class MainActivity extends AppCompatActivity
 
   private synchronized void buildGoogleApiClient() {
     mGoogleApiClient =
-        new GoogleApiClient.Builder(this)
-            .enableAutoManage(this, this)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(ActivityRecognition.API)
-            .build();
+            new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(ActivityRecognition.API)
+                    .build();
   }
 
   @Override
@@ -188,7 +178,7 @@ public class MainActivity extends AppCompatActivity
       Log.i(TAG, "Connected to GoogleApiClient");
     }
     ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-        mGoogleApiClient, 0, createActivityDetectionPendingIntent());
+            mGoogleApiClient, 0, createActivityDetectionPendingIntent());
   }
 
   @Override
@@ -215,6 +205,8 @@ public class MainActivity extends AppCompatActivity
           return mFragments[FRAGMENT_INDEX_SETTING];
         case FRAGMENT_INDEX_LOGGER:
           return mFragments[FRAGMENT_INDEX_LOGGER];
+        case FRAGMENT_INDEX_UPLOAD:
+          return mFragments[FRAGMENT_INDEX_UPLOAD];
         case FRAGMENT_INDEX_RESULT:
           return mFragments[FRAGMENT_INDEX_RESULT];
         case FRAGMENT_INDEX_MAP:
@@ -223,6 +215,7 @@ public class MainActivity extends AppCompatActivity
           return mFragments[FRAGMENT_INDEX_AGNSS];
         case FRAGMENT_INDEX_PLOT:
           return mFragments[FRAGMENT_INDEX_PLOT];
+
         default:
           throw new IllegalArgumentException("Invalid section: " + position);
       }
@@ -242,15 +235,19 @@ public class MainActivity extends AppCompatActivity
           return getString(R.string.title_settings).toUpperCase(locale);
         case FRAGMENT_INDEX_LOGGER:
           return getString(R.string.title_log).toUpperCase(locale);
-        case FRAGMENT_INDEX_RESULT:
-          //now is plot
+
+        //return getString(R.string.title_offset).toUpperCase(locale);
+        case FRAGMENT_INDEX_UPLOAD:
+          return getString(R.string.title_upload).toUpperCase(locale);
+        case FRAGMENT_INDEX_PLOT:
           return getString(R.string.title_plot).toLowerCase(locale);
-          //return getString(R.string.title_offset).toUpperCase(locale);
-        case FRAGMENT_INDEX_MAP:
+       case FRAGMENT_INDEX_MAP:
           return getString(R.string.title_map).toUpperCase(locale);
         case FRAGMENT_INDEX_AGNSS:
           return getString(R.string.title_agnss).toUpperCase(locale);
-        case FRAGMENT_INDEX_PLOT:
+
+        case FRAGMENT_INDEX_RESULT:
+          //now is plot
           return getString(R.string.title_plot).toLowerCase(locale);
         default:
           return super.getPageTitle(position);
@@ -260,7 +257,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onRequestPermissionsResult(
-      int requestCode, String[] permissions, int[] grantResults) {
+          int requestCode, String[] permissions, int[] grantResults) {
     if (requestCode == LOCATION_REQUEST_ID) {
       // If request is cancelled, the result arrays are empty.
       if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -268,23 +265,23 @@ public class MainActivity extends AppCompatActivity
       }
     }
   }
-/** setting up the fragmetnts and tabs*/
+  /** setting up the fragmetnts and tabs*/
   private void setupFragments() {
     mUiLogger = new UiLogger();
     mRealTimePositionVelocityCalculator = new RealTimePositionVelocityCalculator();
     mRealTimePositionVelocityCalculator.setMainActivity(this);
     mRealTimePositionVelocityCalculator.setResidualPlotMode(
-        RealTimePositionVelocityCalculator.RESIDUAL_MODE_DISABLED, null /* fixedGroundTruth */);
+            RealTimePositionVelocityCalculator.RESIDUAL_MODE_DISABLED, null /* fixedGroundTruth */);
 
     mFileLogger = new FileLogger(getApplicationContext());
     mAgnssUiLogger = new AgnssUiLogger();
     mGnssContainer =
-        new GnssContainer(
-            getApplicationContext(),
-            mUiLogger,
-            mFileLogger,
-            mRealTimePositionVelocityCalculator,
-            mAgnssUiLogger);
+            new GnssContainer(
+                    getApplicationContext(),
+                    mUiLogger,
+                    mFileLogger,
+                    mRealTimePositionVelocityCalculator,
+                    mAgnssUiLogger);
     mFragments = new Fragment[NUMBER_OF_FRAGMENTS];
     SettingsFragment settingsFragment = new SettingsFragment();
     settingsFragment.setGpsContainer(mGnssContainer);
@@ -310,9 +307,16 @@ public class MainActivity extends AppCompatActivity
     agnssFragment.setUILogger(mAgnssUiLogger);
     mFragments[FRAGMENT_INDEX_AGNSS] = agnssFragment;
 
+
+
     PlotFragment plotFragment = new PlotFragment();
     mFragments[FRAGMENT_INDEX_PLOT] = plotFragment;
     mRealTimePositionVelocityCalculator.setPlotFragment(plotFragment);
+    UploadFragment uploadFragment = new UploadFragment();
+    mFragments[FRAGMENT_INDEX_UPLOAD] = uploadFragment;
+
+
+
 
 
     // The viewpager that will host the section contents.
@@ -333,12 +337,14 @@ public class MainActivity extends AppCompatActivity
     viewPager.addOnPageChangeListener(new TabLayoutOnPageChangeListener(tabLayout));
 
     //Remove unnecessary tab for the project
+    //tabLayout.removeTabAt(4);
+    //tabLayout.removeTabAt(6);
+    // tabLayout.removeTabAt(2);
+    tabLayout.removeTabAt(6);
+    tabLayout.removeTabAt(5);
     tabLayout.removeTabAt(4);
-    tabLayout.removeTabAt(3);
-    tabLayout.removeTabAt(2);
     //TabHost  tabHost = (TabHost)findViewById(R.id.tab_layout);
     //tabHost.getTabWidget().getChildAt(4).setVisibility(View.GONE);
-    //initUI();
   }
 
   private boolean hasPermissions(Activity activity) {
@@ -397,14 +403,13 @@ public class MainActivity extends AppCompatActivity
     if (result != null){
       int detectedActivityType = result.getMostProbableActivity().getType();
       if (detectedActivityType == DetectedActivity.STILL
-          || detectedActivityType == DetectedActivity.TILTING){
+              || detectedActivityType == DetectedActivity.TILTING){
         mRealTimePositionVelocityCalculator.setResidualPlotMode(
-            RealTimePositionVelocityCalculator.RESIDUAL_MODE_STILL, null);
+                RealTimePositionVelocityCalculator.RESIDUAL_MODE_STILL, null);
       } else {
         mRealTimePositionVelocityCalculator.setResidualPlotMode(
-            RealTimePositionVelocityCalculator.RESIDUAL_MODE_MOVING, null);
+                RealTimePositionVelocityCalculator.RESIDUAL_MODE_MOVING, null);
       }
     }
   }
-
 }
