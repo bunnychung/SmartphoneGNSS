@@ -33,6 +33,10 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+
+import com.google.android.apps.location.gps.gnsslogger.AgnssUiLogger;
+import com.google.android.apps.location.gps.gnsslogger.GnssContainer;
+
 /** The UI fragment that hosts a logging view. */
 public class AgnssFragment extends Fragment {
 

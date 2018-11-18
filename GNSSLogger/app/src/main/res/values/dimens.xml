@@ -5,5 +5,7 @@
     <dimen name="button_text_size">12sp</dimen>
     <dimen name="bluetooth_spp_text_size">30sp</dimen>
     <dimen name="bluetooth_spp_padding">15dp</dimen>
+
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
 

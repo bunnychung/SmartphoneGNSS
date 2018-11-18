@@ -64,14 +64,19 @@ public class MainActivity extends AppCompatActivity
   private static final String[] REQUIRED_PERMISSIONS = {
           Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE
   };
-  private static final int NUMBER_OF_FRAGMENTS = 7;
+  private static final int NUMBER_OF_FRAGMENTS = 5;
   private static final int FRAGMENT_INDEX_SETTING = 0;
   private static final int FRAGMENT_INDEX_LOGGER = 1;
+  private static final int FRAGMENT_INDEX_UPLOAD = 2;
+  private static final int FRAGMENT_INDEX_SKYPLOT =3;
+  private static final int FRAGMENT_INDEX_SKYPLOTEX = 4;
+  /*
   private static final int FRAGMENT_INDEX_RESULT = 5;
   private static final int FRAGMENT_INDEX_MAP = 6;
   private static final int FRAGMENT_INDEX_AGNSS = 4;
-  private static final int FRAGMENT_INDEX_PLOT = 3;
-  private static final int FRAGMENT_INDEX_UPLOAD = 2;
+  private static final int FRAGMENT_INDEX_PLOT = 7;
+  */
+  private boolean m_serviceBound = false;
   private static final String TAG = "MainActivity";
 
   private GnssContainer mGnssContainer;
@@ -90,6 +95,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
               // Empty
+              m_serviceBound=true;
+
             }
 
             @Override
@@ -103,7 +110,7 @@ public class MainActivity extends AppCompatActivity
     super.onStart();
     // Bind to the timer service to ensure it is available when app is running
     bindService(new Intent(this, TimerService.class), mConnection, Context.BIND_AUTO_CREATE);
-    bindService(new Intent(this, LoggerFragment.class), mConnection, Context.BIND_AUTO_CREATE);
+    //bindService(new Intent(this, LoggerFragment.class), mConnection, Context.BIND_AUTO_CREATE);
   }
 
   @Override
@@ -113,7 +120,7 @@ public class MainActivity extends AppCompatActivity
             .registerReceiver(
                     mBroadcastReceiver, new IntentFilter(
                             DetectedActivitiesIntentReceiver.AR_RESULT_BROADCAST_ACTION));
-    bindService(new Intent(this, LoggerFragment.class), mConnection, Context.BIND_AUTO_CREATE);
+   // bindService(new Intent(this, LoggerFragment.class), mConnection, Context.BIND_AUTO_CREATE);
 
 
   }
@@ -134,7 +141,11 @@ public class MainActivity extends AppCompatActivity
   protected void onDestroy(){
     mGnssContainer.unregisterAll();
     super.onDestroy();
-    unbindService(mConnection);
+    if (m_serviceBound) {
+      unbindService(mConnection);
+      m_serviceBound = false;
+    }
+
   }
 
   @Override
@@ -207,7 +218,11 @@ public class MainActivity extends AppCompatActivity
           return mFragments[FRAGMENT_INDEX_LOGGER];
         case FRAGMENT_INDEX_UPLOAD:
           return mFragments[FRAGMENT_INDEX_UPLOAD];
-        case FRAGMENT_INDEX_RESULT:
+        case FRAGMENT_INDEX_SKYPLOT:
+          return mFragments[FRAGMENT_INDEX_SKYPLOT];
+        case FRAGMENT_INDEX_SKYPLOTEX:
+          return mFragments[FRAGMENT_INDEX_SKYPLOTEX];
+      /*  case FRAGMENT_INDEX_RESULT:
           return mFragments[FRAGMENT_INDEX_RESULT];
         case FRAGMENT_INDEX_MAP:
           return mFragments[FRAGMENT_INDEX_MAP];
@@ -215,6 +230,7 @@ public class MainActivity extends AppCompatActivity
           return mFragments[FRAGMENT_INDEX_AGNSS];
         case FRAGMENT_INDEX_PLOT:
           return mFragments[FRAGMENT_INDEX_PLOT];
+        */
 
         default:
           throw new IllegalArgumentException("Invalid section: " + position);
@@ -239,7 +255,12 @@ public class MainActivity extends AppCompatActivity
         //return getString(R.string.title_offset).toUpperCase(locale);
         case FRAGMENT_INDEX_UPLOAD:
           return getString(R.string.title_upload).toUpperCase(locale);
-        case FRAGMENT_INDEX_PLOT:
+
+        case FRAGMENT_INDEX_SKYPLOT:
+          return getString(R.string.title_skyplot).toLowerCase(locale);
+        case FRAGMENT_INDEX_SKYPLOTEX:
+          return getString(R.string.title_skyplotex).toLowerCase(locale);
+        /*case FRAGMENT_INDEX_PLOT:
           return getString(R.string.title_plot).toLowerCase(locale);
        case FRAGMENT_INDEX_MAP:
           return getString(R.string.title_map).toUpperCase(locale);
@@ -248,7 +269,7 @@ public class MainActivity extends AppCompatActivity
 
         case FRAGMENT_INDEX_RESULT:
           //now is plot
-          return getString(R.string.title_plot).toLowerCase(locale);
+          return getString(R.string.title_plot).toLowerCase(locale);*/
         default:
           return super.getPageTitle(position);
       }
@@ -293,7 +314,7 @@ public class MainActivity extends AppCompatActivity
     loggerFragment.setUILogger(mUiLogger);
     loggerFragment.setFileLogger(mFileLogger);
     mFragments[FRAGMENT_INDEX_LOGGER] = loggerFragment;
-
+/*
     ResultFragment resultFragment = new ResultFragment();
     resultFragment.setPositionVelocityCalculator(mRealTimePositionVelocityCalculator);
     mFragments[FRAGMENT_INDEX_RESULT] = resultFragment;
@@ -312,8 +333,15 @@ public class MainActivity extends AppCompatActivity
     PlotFragment plotFragment = new PlotFragment();
     mFragments[FRAGMENT_INDEX_PLOT] = plotFragment;
     mRealTimePositionVelocityCalculator.setPlotFragment(plotFragment);
+    */
     UploadFragment uploadFragment = new UploadFragment();
     mFragments[FRAGMENT_INDEX_UPLOAD] = uploadFragment;
+
+    SkyPlotFragment skyployFragment = new SkyPlotFragment();
+    mFragments[FRAGMENT_INDEX_SKYPLOT] = skyployFragment;
+
+    SkyPlotFragment skyployFragmentEx = new SkyPlotFragment();
+    mFragments[FRAGMENT_INDEX_SKYPLOTEX] = skyployFragmentEx;
 
 
 
@@ -340,9 +368,10 @@ public class MainActivity extends AppCompatActivity
     //tabLayout.removeTabAt(4);
     //tabLayout.removeTabAt(6);
     // tabLayout.removeTabAt(2);
-    tabLayout.removeTabAt(6);
-    tabLayout.removeTabAt(5);
-    tabLayout.removeTabAt(4);
+    //tabLayout.removeTabAt(6);
+    //tabLayout.removeTabAt(5);
+  //  tabLayout.removeTabAt(4);
+  //  tabLayout.removeTabAt(3);
     //TabHost  tabHost = (TabHost)findViewById(R.id.tab_layout);
     //tabHost.getTabWidget().getChildAt(4).setVisibility(View.GONE);
   }

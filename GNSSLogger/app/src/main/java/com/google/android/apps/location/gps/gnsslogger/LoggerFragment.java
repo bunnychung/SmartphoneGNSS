@@ -133,9 +133,10 @@ public class LoggerFragment extends Fragment implements TimerListener {
     mLogView = (TextView) newView.findViewById(R.id.log_view);
     mScrollView = (ScrollView) newView.findViewById(R.id.log_scroll);
 
-    getActivity()
+    /*getActivity()
         .bindService(
             new Intent(getActivity(), TimerService.class), mConnection, Context.BIND_AUTO_CREATE);
+*/
 
     UiLogger currentUiLogger = mUiLogger;
     if (currentUiLogger != null) {
@@ -217,7 +218,7 @@ public class LoggerFragment extends Fragment implements TimerListener {
 
   void stopAndSend() {
     if (mTimer != null) {
-      mTimerService.stopTimer();
+    //  mTimerService.stopTimer();
     }
     enableOptions(true /* start */);
     Toast.makeText(getContext(), R.string.stop_message, Toast.LENGTH_LONG).show();

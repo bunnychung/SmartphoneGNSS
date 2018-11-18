@@ -9,7 +9,9 @@
     <string name="title_map">Map</string>
     <string name="title_agnss">AGNSS</string>
     <string name="title_device">Device</string>
-    <string name="title_upload">UploadFragment</string>
+    <string name="title_upload">Upload</string>
+    <string name="title_skyplot">SkyPlot</string>
+    <string name="title_skyplotex">SkyPlotEX</string>
 
     <string name="title_wls">WLS</string>
     <string name="title_plot">Plot</string>

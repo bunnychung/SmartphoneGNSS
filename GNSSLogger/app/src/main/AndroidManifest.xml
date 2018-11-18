@@ -33,6 +33,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.google.android.apps.location.gps.gnsslogger.MainActivity"
             android:screenOrientation="portrait"

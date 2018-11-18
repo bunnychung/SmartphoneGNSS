@@ -250,14 +250,14 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
                 }
                 logLocationEvent("onLocationChanged: " + location);
                 if (!Double.isNaN(posSolution[0])) {
-                  updateMapViewWithPostions(
+/*                  updateMapViewWithPostions(
                       posSolution[0],
                       posSolution[1],
                       location.getLatitude(),
                       location.getLongitude(),
-                      location.getTime());
+                      location.getTime());*/
                 } else {
-                  clearMapMarkers();
+//                  clearMapMarkers();
                 }
               }
             };
@@ -267,7 +267,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
   }
 
   private void clearMapMarkers() {
-    mMapFragement.clearMarkers();
+//    mMapFragement.clearMarkers();
   }
 
   private void updateMapViewWithPostions(
@@ -276,8 +276,8 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
       double latDegDevice,
       double lngDegDevice,
       long timeMillis) {
-    mMapFragement.updateMapViewWithPostions(
-        latDegRaw, lngDegRaw, latDegDevice, lngDegDevice, timeMillis);
+/*    mMapFragement.updateMapViewWithPostions(
+        latDegRaw, lngDegRaw, latDegDevice, lngDegDevice, timeMillis);*/
   }
 
   @Override
@@ -294,7 +294,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
                 new Runnable() {
                   @Override
                   public void run() {
-                    mPlotFragment.updateCnoTab(event);
+//                    mPlotFragment.updateCnoTab(event);
                   }
                 });
             if (mPseudorangePositionVelocityFromRealTimeEvents == null) {
@@ -331,11 +331,11 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
                       @Override
                       public void run() {
                         // Here we create gaps when the residual plot is disabled
-                        mPlotFragment.updatePseudorangeResidualTab(
+                      /*  mPlotFragment.updatePseudorangeResidualTab(
                             GpsMathOperations.createAndFillArray(
                                 GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN),
                             TimeUnit.NANOSECONDS.toSeconds(
-                                event.getClock().getTimeNanos()));
+                                event.getClock().getTimeNanos()));*/
                       }
                     }
                 );
