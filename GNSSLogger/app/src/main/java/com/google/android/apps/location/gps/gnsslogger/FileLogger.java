@@ -60,6 +60,7 @@ public class FileLogger implements GnssListener {
   private static final char RECORD_DELIMITER = ',';
   private static final String VERSION_TAG = "Version: ";
 
+
   private static final int MAX_FILES_STORED = 100;
   private static final int MINIMUM_USABLE_FILE_SIZE_BYTES = 1000;
 
@@ -171,7 +172,7 @@ public class FileLogger implements GnssListener {
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();*/
-        currentFileWriter.write("SvID,Cn0Dbz,Elevation,Azimuth");
+        currentFileWriter.write("Time passed(ms),internal clock(ns),SvID,Cn0Dbz");
         currentFileWriter.newLine();
       } catch (IOException e) {
         logException("Count not initialize file: " + currentFilePath, e);
@@ -338,25 +339,25 @@ public class FileLogger implements GnssListener {
 
   @Override
   public void onGnssStatusChanged(GnssStatus gnssStatus) {
-      synchronized (mFileLock) {
+/*      synchronized (mFileLock) {
           if (mFileWriter == null) {
               return;
           }
           StringBuilder builder = new StringBuilder();
           for (int i = 0; i < gnssStatus.getSatelliteCount(); i++) {
-/*              builder
+*//*              builder
                       .append("Constellation = ")
-                      *//*.append(getConstellationName(gnssStatus.getConstellationType(i)))**//*
-                      .append(", ");*/
+                      *//**//*.append(getConstellationName(gnssStatus.getConstellationType(i)))**//**//*
+                      .append(", ");*//*
               builder.append(gnssStatus.getSvid(i)).append(",");
               builder.append(gnssStatus.getCn0DbHz(i)).append(",");
               builder.append(gnssStatus.getElevationDegrees(i)).append(",");
               builder.append(gnssStatus.getAzimuthDegrees(i));
               builder.append("\n");
 
-/*              builder.append("hasEphemeris = ").append(gnssStatus.hasEphemerisData(i)).append(", ");
+*//*              builder.append("hasEphemeris = ").append(gnssStatus.hasEphemerisData(i)).append(", ");
               builder.append("hasAlmanac = ").append(gnssStatus.hasAlmanacData(i)).append(", ");
-              builder.append("usedInFix = ").append(gnssStatus.usedInFix(i)).append("\n");*/
+              builder.append("usedInFix = ").append(gnssStatus.usedInFix(i)).append("\n");*//*
           }
 
           try {
@@ -365,7 +366,7 @@ public class FileLogger implements GnssListener {
           } catch (IOException e) {
               logException(ERROR_WRITING_FILE, e);
           }
-      }
+      }*/
   }
   @Override
   public void onNmeaReceived(long timestamp, String s) {
