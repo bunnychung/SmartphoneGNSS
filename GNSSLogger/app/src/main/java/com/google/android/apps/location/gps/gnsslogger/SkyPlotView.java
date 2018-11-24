@@ -35,7 +35,25 @@ public class SkyPlotView extends View {
         init(context);
     }
 
+    //ColorMap colors
+    int[] colors = {
+           // Color.BLUE,    // green(0-50)
+            Color.rgb(51,204,255),//very light blue
+            Color.rgb(0,0,153),//very dark blue
 
+            Color.rgb(255,255,153), //light yellow
+            Color.rgb(255,204, 0), //very dark yellow
+            Color.rgb(255,102,102), // very light red
+            Color.rgb(153,0,0), //dark red
+            //Color.YELLOW,    // yellow(51-100)
+            //Color.RED              //red(151-200)
+
+    };
+
+    float[] startpoints = {
+            0.1F, 0.2F, 0.3F, 0.4F, 0.6F, 1.0F
+    };
+    Gradient gradient = new Gradient(colors,startpoints);
     DisplayMetrics metrics = new DisplayMetrics();
     WindowManager wm;
     int window_width_in_pixels = 0;
@@ -83,7 +101,8 @@ public class SkyPlotView extends View {
         before_satellite_paint.setColor(Color.GRAY);
         current_satellite_paint = new Paint();
         current_satellite_paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        current_satellite_paint.setColor(Color.RED);
+        //changed
+        current_satellite_paint.setColor(gradient.mColors[3]);
 
 
         wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -151,7 +170,7 @@ public class SkyPlotView extends View {
                 draw_calculated_Elev_Azi_to_X_Y_Coord(
                         canvas,
                         satelliteList.get(i).elevation_in_degree,
-                        satelliteList.get(i).azimuth_in_degree,
+                        satelliteList.get(i).azimuth_in_degree,satelliteList.get(i).snr,
                         TypedValueCalculate.dp2pixel(4, mContext),
                         satelliteList.get(i).satellite_num,
                         current_satellite_paint);
@@ -159,7 +178,7 @@ public class SkyPlotView extends View {
                 draw_calculated_Elev_Azi_to_X_Y_Coord(
                         canvas,
                         satelliteList.get(i).elevation_in_degree,
-                        satelliteList.get(i).azimuth_in_degree,
+                        satelliteList.get(i).azimuth_in_degree,satelliteList.get(i).snr,
                         TypedValueCalculate.dp2pixel(4, mContext),
                         satelliteList.get(i).satellite_num,
                         before_satellite_paint);
@@ -169,7 +188,7 @@ public class SkyPlotView extends View {
 
     }
 
-    private void draw_calculated_Elev_Azi_to_X_Y_Coord(Canvas canvas, double elevation, double azimuth_in_degree, int circle_size, String satellite_num, Paint paint) {
+    private void draw_calculated_Elev_Azi_to_X_Y_Coord(Canvas canvas, double elevation, double azimuth_in_degree,/*added para*/double snr, int circle_size, String satellite_num, Paint paint) {
         double x = 0, y = 0;
         // calculate position
         x = center_point_x * 3 / 4 * Math.cos(elevation * Math.PI / 180) * Math.sin(azimuth_in_degree * Math.PI / 180);
@@ -178,13 +197,29 @@ public class SkyPlotView extends View {
         x = x + center_point_x;
         y = y + center_point_y;
         // draw satellite
-        canvas.drawCircle((float) x, (float) y, circle_size, paint);
+        Paint spcolormap= new Paint();
+        if(snr>41.6)
+            spcolormap.setColor(gradient.mColors[5]);
+        if(33.2<=snr && snr<41.5)
+            spcolormap.setColor(gradient.mColors[4]);
+
+
+        if(24.9<=snr && snr<33.2)
+                spcolormap.setColor(gradient.mColors[3]);
+        if(16.6<=snr && snr<24.9)
+            spcolormap.setColor(gradient.mColors[2]);
+        if(8.3<=snr && snr<16.6)
+            spcolormap.setColor(gradient.mColors[1]);
+        if(0<=snr && snr<8.3)
+            spcolormap.setColor(gradient.mColors[0]);
+        canvas.drawCircle((float) x, (float) y, circle_size, spcolormap);
+
        // canvas.drawText(satellite_num, (float) x, (float) y - TypedValueCalculate.dp2pixel(3, mContext), textPaint);
     }
 
 
-    public void addSatellite(double elevation_in_degree, double azimuth_in_degree, String satellite_num, boolean havePRC) {
-        newData = new SatelliteData(elevation_in_degree, azimuth_in_degree, "G" + satellite_num, havePRC);
+    public void addSatellite(double elevation_in_degree, double azimuth_in_degree,double snr /*String satellite_num*/, boolean havePRC) {
+        newData = new SatelliteData(elevation_in_degree, azimuth_in_degree,/*"G" + satellite_num*/snr, havePRC);
         satelliteList.add(newData);
 
     }

@@ -129,8 +129,8 @@ public class SkyPlotFragment extends Fragment{
 
             // for (int i = 0; i < data.size(); i++)
             //   {
-            this.spView.addSatellite(
-                    ele+a,az-a," ",true);
+          //  this.spView.addSatellite(
+                   // ele+a,az-a," ",true);
             //   }
             this.spView.refreshCanvas();
 
@@ -157,7 +157,7 @@ public class SkyPlotFragment extends Fragment{
         }
 
 //Get the text file
-        File file = new File(baseDirectory,"mfile.txt");
+        File file = new File(baseDirectory,"gnss_log_2018_11_14_18_43_23.txt");
         //File csv
 
         //csv file
@@ -188,12 +188,39 @@ public class SkyPlotFragment extends Fragment{
 
 
             while ((line = br.readLine()) != null) {
-                result= line.split(",");
-                this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), result[0],true);
-                this.spView.refreshCanvas();
-               // msg.setText(result.toString());
-                text.append(line);
-                text.append('\n');
+
+             //   Log.d("STATE","inside reading file");
+
+               //msg.setText(result.toString());
+                //text.append(line);
+                //text.append('\n');
+              //  if(line.contains(",")) {
+                   /* String[] parts = line.split("\\.");
+                    String part1 = parts[0];
+                    String part2 = parts[1];*/
+                    result= line.split(",");
+                   /* try{
+                        Double az=Double.parseDouble(result[3]);
+                    }catch (NumberFormatException e)
+                    {
+                        Log.e("State",result[3]);
+                    }*/
+                    if(result.length==4) {
+                        this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
+                        this.spView.refreshCanvas();
+                    }
+                   else {
+                        Log.e("State", "the line doen't have 4 elements");
+                        Log.e("here is the line", line);
+                    }
+                   // line= result.length;
+              //  Log.e("State", result[0]);
+                //int[] ln={result.length};
+               // Log.e("here result at 0 index",result[2]);
+
+               // } else {
+                    //Log.e("State","Corrupted data as: " );
+               // }
             }
             br.close();
         }
