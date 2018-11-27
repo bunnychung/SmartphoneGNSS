@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.apps.location.gps.gnsslogger.TimerService.TimerBinder;
 import com.google.android.apps.location.gps.gnsslogger.TimerService.TimerListener;
+import com.google.android.apps.location.gps.gnsslogger.SettingsFragment;
 
 /** The UI fragment that hosts a logging view. */
 public class LoggerFragment extends Fragment implements TimerListener {
@@ -54,8 +56,11 @@ public class LoggerFragment extends Fragment implements TimerListener {
   private FileLogger mFileLogger;
   private UiLogger mUiLogger;
   private Button mStartLog;
+  Button Bt;
   private Button mTimer;
+  private BluetoothSPP bluetooth;
   private Button mSendFile;
+  private SettingsFragment stfr;
   private TextView mTimerDisplay;
   private TimerService mTimerService;
   private TimerValues mTimerValues =
@@ -179,7 +184,9 @@ public class LoggerFragment extends Fragment implements TimerListener {
     mTimer = (Button) newView.findViewById(R.id.timer);
     mStartLog = (Button) newView.findViewById(R.id.start_logs);
     mSendFile = (Button) newView.findViewById(R.id.send_file);
+    Bt= (Button) newView.findViewById(R.id.btconnect);
 
+      connectBT();
     displayTimer(mTimerValues, false /* countdownStyle */);
     enableOptions(true /* start */);
 
@@ -194,6 +201,9 @@ public class LoggerFragment extends Fragment implements TimerListener {
             if (!mTimerValues.isZero() && (mTimerService != null)) {
               mTimerService.startTimer();
             }
+
+            //Prompt Arduino to start logging data
+            bluetooth.send("b");
           }
         });
 
@@ -201,7 +211,11 @@ public class LoggerFragment extends Fragment implements TimerListener {
         new OnClickListener() {
           @Override
           public void onClick(View view) {
-            stopAndSend();
+              //Prompt Arduino to stop logging data
+              bluetooth.send("e");
+              //disconnect the BT
+              bluetooth.stopService();
+              stopAndSend();
           }
         });
 
@@ -311,4 +325,77 @@ public class LoggerFragment extends Fragment implements TimerListener {
       getActivity().startActivity(intent);
     }
   }
+
+  //BT section
+  public void connectBT() {
+
+      bluetooth = new BluetoothSPP(this.getContext());
+      if (!bluetooth.isBluetoothEnabled()) {
+          bluetooth.enable();
+      } else {
+          if (!bluetooth.isServiceAvailable()) {
+              bluetooth.setupService();
+              bluetooth.startService(BluetoothState.DEVICE_OTHER);
+          }
+      }
+      if (!bluetooth.isBluetoothAvailable()) {
+          Toast.makeText(getActivity().getApplication()/*getApplicationContext()*/, "Bluetooth is not available", Toast.LENGTH_SHORT).show();
+          getActivity().finish();
+      }
+
+      bluetooth.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
+          public void onDeviceConnected(String name, String address) {
+              Bt.setText("Connected to " + name);
+          }
+
+          public void onDeviceDisconnected() {
+              Bt.setText("Connection lost");
+          }
+
+          public void onDeviceConnectionFailed() {
+              Bt.setText("Unable to connect");
+          }
+      });
+      Bt.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              if (bluetooth.getServiceState() == BluetoothState.STATE_CONNECTED) {
+                  bluetooth.disconnect();
+              } else {
+                  Intent intent = new Intent(getActivity().getApplicationContext(), DeviceList.class);
+                  startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
+              }
+          }
+      });
+
+      /*public void onDestroy() {
+          super.onDestroy();
+          bluetooth.stopService();
+      }*/
+
+
+  }
+
+
+
+
+
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
+            if (resultCode == Activity.RESULT_OK)
+                bluetooth.connect(data);
+        } else if (requestCode == BluetoothState.REQUEST_ENABLE_BT) {
+            if (resultCode == Activity.RESULT_OK) {
+                bluetooth.setupService();
+            } else {
+                Toast.makeText(getActivity().getApplication()
+                        , "Bluetooth was not enabled."
+                        , Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        }
+    }
+
 }

@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity
     SkyPlotFragment skyployFragment = new SkyPlotFragment();
     mFragments[FRAGMENT_INDEX_SKYPLOT] = skyployFragment;
 
-    SkyPlotFragment skyployFragmentEx = new SkyPlotFragment();
+    ExternalSkyPlotFragment skyployFragmentEx = new ExternalSkyPlotFragment();
     mFragments[FRAGMENT_INDEX_SKYPLOTEX] = skyployFragmentEx;
 
 

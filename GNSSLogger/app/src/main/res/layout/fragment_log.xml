@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -33,8 +34,9 @@
     <ScrollView
         android:id="@+id/log_scroll"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="300dp"
         android:layout_weight="1">
+
         <TextView
             android:id="@+id/log_view"
             android:layout_width="match_parent"
@@ -57,29 +59,38 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/timer"
-            android:text="Timer"
-            android:layout_width="0dp"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            android:text="Timer" />
+
+        <Button
+            android:id="@+id/btconnect"
+            android:layout_width="7dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="BtConnect" />
 
         <Button
             android:id="@+id/start_logs"
-            android:text="Start Log"
             android:layout_width="0dp"
+            android:layout_height="39dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            android:text="Start Log" />
 
         <Button
             android:id="@+id/send_file"
-            android:text="Stop &amp; Send"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="Stop &amp; Send" />
 
     </LinearLayout>
 

@@ -3,15 +3,12 @@ package com.google.android.apps.location.gps.gnsslogger;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -22,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -31,13 +27,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
+public class ExternalSkyPlotFragment extends Fragment {
 
-
-
-
-public class SkyPlotFragment extends Fragment{
-
-   SkyPlotView spView;
+    SkyPlotView spView;
     private ScrollView mScrollView;
     //TextView msg;
     final private Fragment spFragment=this;
@@ -51,7 +43,7 @@ public class SkyPlotFragment extends Fragment{
 
     //TextView text_nmea;
     private SkyPlotFragment.UIFragmentSkyPlotComponent mUiFragmentSkyPlotComponent;
-   final double SVid=1;
+    final double SVid=1;
     Button connect;
     //Button on;
     //Button off;
@@ -66,7 +58,7 @@ public class SkyPlotFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View skyView = inflater.inflate(R.layout.fragment_skyplot, container, false /* attachToRoot */);
+        View skyView = inflater.inflate(R.layout.fragment_skyplot, container, false /* attachToRoot */);
 
         linear_parent = (LinearLayout) skyView.findViewById(R.id.linear_parent);
         // graph_snr = (GraphView) findViewById(R.id.graph_snr);
@@ -87,26 +79,27 @@ public class SkyPlotFragment extends Fragment{
 
 
         Button btn= (Button) skyView.findViewById(R.id.btn_capture);
-      textPRN= (EditText) skyView.findViewById(R.id.prn_code);
-       // msg =(TextView) skyView.findViewById(R.id.msg) ;
+        textPRN= (EditText) skyView.findViewById(R.id.prn_code);
+        // msg =(TextView) skyView.findViewById(R.id.msg) ;
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                try {
+              /*  try {
                     FileOutputStream f = spFragment.getContext().openFileOutput("files",0);
                     f.write(txt.getBytes());
                     f.close();
-
-                   // openfile();
+*/
+                    // openfile();
                     spView.removeAllSatellites();
-                   openfile(/*Double.parseDouble(textPRN.getText().toString())*/);
+                    openfile(/*Double.parseDouble(textPRN.getText().toString())*/);
 
 
-
+/*
                 }catch (IOException e){
                     e.printStackTrace();
                 }
+                */
 
 
 
@@ -118,7 +111,7 @@ public class SkyPlotFragment extends Fragment{
 
             }
         });
-      return skyView;
+        return skyView;
 
     }
 
@@ -138,8 +131,8 @@ public class SkyPlotFragment extends Fragment{
 
             // for (int i = 0; i < data.size(); i++)
             //   {
-          //  this.spView.addSatellite(
-                   // ele+a,az-a," ",true);
+            //  this.spView.addSatellite(
+            // ele+a,az-a," ",true);
             //   }
             this.spView.refreshCanvas();
 
@@ -166,7 +159,7 @@ public class SkyPlotFragment extends Fragment{
         }
 
 //Get the text file
-        File file = new File(baseDirectory,"mfile.txt");
+        File file = new File(baseDirectory,"extnlfile.txt");
         //File csv
 
         //csv file
@@ -198,54 +191,55 @@ public class SkyPlotFragment extends Fragment{
 
             while ((line = br.readLine()) != null) {
 
-             //   Log.d("STATE","inside reading file");
+                //   Log.d("STATE","inside reading file");
 
-               //msg.setText(result.toString());
+                //msg.setText(result.toString());
                 //text.append(line);
                 //text.append('\n');
-              //  if(line.contains(",")) {
+                //  if(line.contains(",")) {
                    /* String[] parts = line.split("\\.");
                     String part1 = parts[0];
                     String part2 = parts[1];*/
-                    result= line.split(",");
+                result= line.split(",");
                    /* try{
                         Double az=Double.parseDouble(result[3]);
                     }catch (NumberFormatException e)
                     {
                         Log.e("State",result[3]);
                     }*/
-                    if(result.length==4  ) {
+                if(result.length==4  ) {
 
-                        try
-                        {
+                    try
+                    {
 
-                            double svid = Double.parseDouble(textPRN.getText().toString());
-                            if (Double.parseDouble(result[0]) == svid) {
-                                this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
-                                this.spView.refreshCanvas();
-                            }
-
-                        }catch (NumberFormatException e)
-                        {
+                        double svid = Double.parseDouble(textPRN.getText().toString());
+                        if (Double.parseDouble(result[0]) == svid) {
                             this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
                             this.spView.refreshCanvas();
                         }
 
+                    }catch (NumberFormatException e)
+                    {
+                        this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
+                        this.spView.refreshCanvas();
+                    }
 
-                    }
-                   else {
-                        Toast.makeText(this.getContext(), "File does not have the correct data", Toast.LENGTH_SHORT).show();
-                       // Log.e("State", "the line doen't have 4 elements");
-                        //Log.e("here is the line", line);
-                    }
-                   // line= result.length;
-              //  Log.e("State", result[0]);
+
+                }
+                else {
+                    Toast.makeText(this.getContext(), "File does not have the correct data", Toast.LENGTH_SHORT).show();
+                    return;
+                    //Log.e("State", "the line doen't have 4 elements");
+                    //Log.e("here is the line", line);
+                }
+                // line= result.length;
+                //  Log.e("State", result[0]);
                 //int[] ln={result.length};
-               // Log.e("here result at 0 index",result[2]);
+                // Log.e("here result at 0 index",result[2]);
 
-               // } else {
-                    //Log.e("State","Corrupted data as: " );
-               // }
+                // } else {
+                //Log.e("State","Corrupted data as: " );
+                // }
             }
             br.close();
         }
@@ -296,11 +290,11 @@ public class SkyPlotFragment extends Fragment{
                     new Runnable() {
                         @Override
                         public void run() {
-                           // mLogView.append(builder);
+                            // mLogView.append(builder);
                             SharedPreferences sharedPreferences = PreferenceManager.
                                     getDefaultSharedPreferences(getActivity());
-                           // Editable editable = mLogView.getEditableText();
-                           // int length = editable.length();
+                            // Editable editable = mLogView.getEditableText();
+                            // int length = editable.length();
                           /*  if (length > MAX_LENGTH) {
                                 editable.delete(0, length - LOWER_THRESHOLD);
                             }
@@ -322,6 +316,4 @@ public class SkyPlotFragment extends Fragment{
         }
     }
 
-
 }
-

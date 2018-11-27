@@ -7,7 +7,7 @@ android {
 
     }
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+  //  buildToolsVersion '26.0.0'
     defaultConfig {
         applicationId "com.google.android.apps.location.gps.gnsslogger"
         minSdkVersion 24

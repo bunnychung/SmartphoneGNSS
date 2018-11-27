@@ -44,7 +44,7 @@ public class UploadFragment extends Fragment {
     final String OFF = "0";
     final private String TAG="Hi";
     //final private Context context = this;
-    public String path= Environment.getExternalStorageDirectory().getAbsolutePath();
+
     BluetoothSPP bluetooth;
     final private Fragment mfragment= this;
     private int var=0;
@@ -52,13 +52,15 @@ public class UploadFragment extends Fragment {
     String filename = "/mfile.txt";
 
     // File directory = context.getFilesDir();
+   /*public String path= Environment.getExternalStorageDirectory().getAbsolutePath();
     private File file = new File(path + filename);
     final private String pathfile = file.getAbsolutePath();
 
-
+*/
     private UIFragmentUploadComponent mUiFragmentuploadComponent;
 
     Button connect;
+    Button upload;
     //Button on;
     //Button off;
 
@@ -79,7 +81,7 @@ public class UploadFragment extends Fragment {
         bluetooth = new BluetoothSPP(this.getContext());
 
         connect = (Button) upView.findViewById(R.id.connect);
-        //  on = (Button) findViewById(R.id.on);
+        upload= (Button) upView.findViewById(R.id.upload_btn);
         // off = (Button) findViewById(R.id.off);
 
 
@@ -91,7 +93,7 @@ public class UploadFragment extends Fragment {
             Toast.makeText(mfragment.getContext(), "Bluetooth is not available", Toast.LENGTH_SHORT).show();
             mfragment.getActivity().finish();
             // Toast.makeText(mfragment.getContext(), "Bluetooth is not available", pathfile.toString()).show();
-            Log.d("hi",pathfile);
+            //Log.d("hi",pathfile);
         }
 
         bluetooth.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
@@ -146,6 +148,13 @@ public class UploadFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), DeviceList.class);
                     startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
                 }
+            }
+    });
+
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bluetooth.send("s");
             }
         });
 
@@ -208,8 +217,24 @@ public class UploadFragment extends Fragment {
 
             if(var==0)
             {//  String path = "/data/data/.txt";
+                File baseDirectory;
+                String state = Environment.getExternalStorageState();
+                if (Environment.MEDIA_MOUNTED.equals(state)) {
+                    baseDirectory = new File(Environment.getExternalStorageDirectory(), "gnss_log");
+                    baseDirectory.mkdirs();
+                } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+                    Log.d("STATE","can't write");
+                    return;
+                } else {
+                    Log.d("STATE","can't read");
+                    return;
+                }
+
+//Get the text file
+                File file = new File(baseDirectory,"extnlfile.txt");
                 FileOutputStream stream = /*context.openFileOutput(filename, Context.MODE_PRIVATE);*/new FileOutputStream(file);
                 oldstream=stream;
+                Toast.makeText(this.getContext(), "File created ...reception started", Toast.LENGTH_SHORT).show();
                 var++;
                 try {
                     stream.write(array);
@@ -239,6 +264,9 @@ public class UploadFragment extends Fragment {
         }
         Log.d(TAG,"inside write to file. abt to exit");
     }
+
+
+
     public class UIFragmentUploadComponent {
 
         private static final int MAX_LENGTH = 42000;

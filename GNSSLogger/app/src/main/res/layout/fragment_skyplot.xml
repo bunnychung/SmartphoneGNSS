@@ -10,23 +10,39 @@ android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="379dp"
         android:layout_weight="1">
 
         <com.google.android.apps.location.gps.gnsslogger.SkyPlotView
             android:id="@+id/spview"
             android:layout_width="match_parent"
-            android:layout_height="370dp"
+            android:layout_height="327dp"
 
             />
 
         <Button
             android:id="@+id/btn_capture"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:text="Plot" />
+            android:layout_marginRight="150dp"
+            android:text="Plot"
+            tools:layout_height="wrap_content"
+            tools:layout_marginBottom="50dp"
+            tools:layout_marginLeft="150dp" />
 
+        <EditText
+            android:id="@+id/prn_code"
+            android:layout_width="199dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="100dp"
+            android:layout_marginRight="100dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:selectAllOnFocus="false"
+            android:singleLine="false"
+            tools:layout_marginLeft="100dp" />
 
 
     </FrameLayout>
