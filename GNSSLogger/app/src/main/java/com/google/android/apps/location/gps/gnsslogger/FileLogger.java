@@ -121,8 +121,8 @@ public class FileLogger implements GnssListener {
       }
 
       // initialize the contents of the file
-      try {
-        /*currentFileWriter.write(COMMENT_START);
+/*      try {
+        *//*currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.write("Header Description:");
@@ -171,13 +171,13 @@ public class FileLogger implements GnssListener {
         currentFileWriter.write("Nav,Svid,Type,Status,MessageId,Sub-messageId,Data(Bytes)");
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
-        currentFileWriter.newLine();*/
+        currentFileWriter.newLine();*//*
         currentFileWriter.write("Time passed(ms),internal clock(ns),SvID,Cn0Dbz");
         currentFileWriter.newLine();
       } catch (IOException e) {
         logException("Count not initialize file: " + currentFilePath, e);
         return;
-      }
+      }*/
 
       if (mFileWriter != null) {
         try {
@@ -392,18 +392,19 @@ public class FileLogger implements GnssListener {
 
   private void writeGnssMeasurementToFile(GnssClock clock, GnssMeasurement measurement)
       throws IOException {
+    //get measurement for satellite id and CNR
+    String measurementStream =
+            String.format("%s,%s",measurement.getSvid(),measurement.getCn0DbHz()+",");
+
+    mFileWriter.write(measurementStream);
     String clockStream =
         String.format("%s,%s",
-            SystemClock.elapsedRealtime()-baseTime,clock.getTimeNanos()+",");
+            SystemClock.elapsedRealtime()-baseTime,SystemClock.elapsedRealtime()-baseTime);
 
 
     mFileWriter.write(clockStream);
 
-    //get measurement for satellite id and CNR
-    String measurementStream =
-        String.format("%s,%s",measurement.getSvid(),measurement.getCn0DbHz());
 
-    mFileWriter.write(measurementStream);
     mFileWriter.newLine();
 
   }
