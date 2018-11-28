@@ -302,8 +302,9 @@ public class FileLogger implements GnssListener {
   public void onGnssMeasurementsStatusChanged(int status) {}
 
   @Override
+  //dont log Gnss naviation
   public void onGnssNavigationMessageReceived(GnssNavigationMessage navigationMessage) {
-    synchronized (mFileLock) {
+/*    synchronized (mFileLock) {
       if (mFileWriter == null) {
         return;
       }
@@ -331,7 +332,7 @@ public class FileLogger implements GnssListener {
       } catch (IOException e) {
         logException(ERROR_WRITING_FILE, e);
       }
-    }
+    }*/
   }
 
   @Override
@@ -369,8 +370,9 @@ public class FileLogger implements GnssListener {
       }*/
   }
   @Override
+  //don't log Nmea
   public void onNmeaReceived(long timestamp, String s) {
-    synchronized (mFileLock) {
+/*    synchronized (mFileLock) {
       if (mFileWriter == null) {
         return;
       }
@@ -381,7 +383,7 @@ public class FileLogger implements GnssListener {
       } catch (IOException e) {
         logException(ERROR_WRITING_FILE, e);
       }
-    }
+    }*/
   }
 
   @Override
