@@ -407,6 +407,12 @@ public class FileLogger implements GnssListener {
     return angle;
   }
 
+  public int time2ele(){
+    int angle = 0;
+    angle = sint/18;
+    return angle;
+  }
+
   private void writeGnssMeasurementToFile(GnssClock clock, GnssMeasurement measurement)
       throws IOException {
     //get measurement for satellite id and CNR
@@ -415,7 +421,7 @@ public class FileLogger implements GnssListener {
 
     mFileWriter.write(measurementStream);
     String clockStream =
-        String.format("%s,%s", time2an(),sint/*(SystemClock.elapsedRealtime()-baseTime)/1000*/);
+        String.format("%s,%s", time2an(),time2ele()/*(SystemClock.elapsedRealtime()-baseTime)/1000*/);
 
 
     mFileWriter.write(clockStream);
