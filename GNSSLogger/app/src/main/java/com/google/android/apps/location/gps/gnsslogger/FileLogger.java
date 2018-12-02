@@ -409,7 +409,7 @@ public class FileLogger implements GnssListener {
 
   public int time2ele(){
     int angle = 0;
-    angle = sint/18;
+    angle = (sint/18)*20;
     return angle;
   }
 
