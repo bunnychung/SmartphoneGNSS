@@ -71,6 +71,7 @@ public class FileLogger implements GnssListener {
   private File mFile;
 
   public long baseTime = 0;
+  public int sint = 0;
 
   private UIFragmentComponent mUiComponent;
 
@@ -218,6 +219,7 @@ public class FileLogger implements GnssListener {
     if (mFile == null) {
       return;
     }
+    sint = 0;
     baseTime = 0;
     Intent emailIntent = new Intent(Intent.ACTION_SEND);
     emailIntent.setType("*/*");
@@ -291,10 +293,12 @@ public class FileLogger implements GnssListener {
       for (GnssMeasurement measurement : event.getMeasurements()) {
         try {
           writeGnssMeasurementToFile(gnssClock, measurement);
+
         } catch (IOException e) {
           logException(ERROR_WRITING_FILE, e);
         }
       }
+      sint = sint + 1;
     }
   }
 
@@ -392,6 +396,17 @@ public class FileLogger implements GnssListener {
   @Override
   public void onTTFFReceived(long l) {}
 
+  public int time2an(){
+    int angle = 0;
+    if ((sint%36)>18){
+      angle = 360 -(sint%18)*20;
+    }
+    else{
+      angle = 20*(sint%18);
+    }
+    return angle;
+  }
+
   private void writeGnssMeasurementToFile(GnssClock clock, GnssMeasurement measurement)
       throws IOException {
     //get measurement for satellite id and CNR
@@ -400,8 +415,7 @@ public class FileLogger implements GnssListener {
 
     mFileWriter.write(measurementStream);
     String clockStream =
-        String.format("%s,%s",
-            SystemClock.elapsedRealtime()-baseTime,SystemClock.elapsedRealtime()-baseTime);
+        String.format("%s,%s", time2an(),sint/*(SystemClock.elapsedRealtime()-baseTime)/1000*/);
 
 
     mFileWriter.write(clockStream);
