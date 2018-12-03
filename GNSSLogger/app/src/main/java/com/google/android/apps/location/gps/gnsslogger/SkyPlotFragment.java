@@ -166,7 +166,7 @@ public class SkyPlotFragment extends Fragment{
         }
 
 //Get the text file
-        File file = new File(baseDirectory,"mfile.txt");
+        File file = new File(baseDirectory,"gnss_log.txt");
         //File csv
 
         //csv file

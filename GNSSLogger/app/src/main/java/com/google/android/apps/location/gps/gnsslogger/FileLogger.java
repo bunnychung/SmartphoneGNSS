@@ -45,9 +45,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
+import java.lang.Number;
 import android.os.Bundle;
 import android.util.Log;
+import java.lang.Math;
 /**
  * A GNSS logger to store information to a file.
  */
@@ -396,20 +397,28 @@ public class FileLogger implements GnssListener {
   @Override
   public void onTTFFReceived(long l) {}
 
-  public int time2an(){
+  public int time2an(long btime){
     int angle = 0;
-    if ((sint%36)>18){
-      angle = 360 -(sint%18)*20;
+    double d = (double) btime;
+    d = d/1000;
+    int i = (int) Math.round(d);
+    if ((i%38)>19){
+      angle = 360 -(i%19)*20;
     }
     else{
-      angle = 20*(sint%18);
+      angle = 20*(i%19);
     }
     return angle;
   }
 
-  public int time2ele(){
+  public int time2ele(long btime){
     int angle = 0;
-    angle = (sint/18)*20;
+    double d = (double) btime;
+    d = d/1000;
+    int i = (int) Math.round(d);
+    i = i/19;
+    angle = 10*i;
+/*    angle = (sint/18)*20;*/
     return angle;
   }
 
@@ -421,7 +430,8 @@ public class FileLogger implements GnssListener {
 
     mFileWriter.write(measurementStream);
     String clockStream =
-        String.format("%s,%s", time2an(),time2ele()/*(SystemClock.elapsedRealtime()-baseTime)/1000*/);
+        String.format("%s,%s", time2an(SystemClock.elapsedRealtime()-baseTime),time2ele(SystemClock.elapsedRealtime()-baseTime)/*,SystemClock.elapsedRealtime()-baseTime,clock.getTimeNanos()*/);
+
 
 
     mFileWriter.write(clockStream);
