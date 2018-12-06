@@ -178,7 +178,6 @@ public class ExternalSkyPlotFragment extends Fragment {
 
 
 
-
         //end csv file
         String[] result={};
 //Read text from file

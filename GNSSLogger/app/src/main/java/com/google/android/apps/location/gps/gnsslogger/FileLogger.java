@@ -420,6 +420,7 @@ public class FileLogger implements GnssListener {
     angle = 36*i;
 /*    angle = (sint/18)*20;*/
 
+
     return angle;
   }
 
