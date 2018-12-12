@@ -30,6 +30,7 @@ import java.io.IOException;
 public class ExternalSkyPlotFragment extends Fragment {
 
     SkyPlotView spView;
+    SkyPlotView spView2;
     private ScrollView mScrollView;
     //TextView msg;
     final private Fragment spFragment=this;
@@ -63,6 +64,7 @@ public class ExternalSkyPlotFragment extends Fragment {
         linear_parent = (LinearLayout) skyView.findViewById(R.id.linear_parent);
         // graph_snr = (GraphView) findViewById(R.id.graph_snr);
         spView =  skyView.findViewById(R.id.spview);
+        spView2 =  skyView.findViewById(R.id.spview2);
 //        spView.showDegree(false);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 
@@ -92,6 +94,7 @@ public class ExternalSkyPlotFragment extends Fragment {
 */
                     // openfile();
                     spView.removeAllSatellites();
+                spView2.removeAllSatellites();
                     openfile(/*Double.parseDouble(textPRN.getText().toString())*/);
 
 
@@ -178,6 +181,7 @@ public class ExternalSkyPlotFragment extends Fragment {
 
 
 
+
         //end csv file
         String[] result={};
 //Read text from file
@@ -213,14 +217,30 @@ public class ExternalSkyPlotFragment extends Fragment {
 
                         double svid = Double.parseDouble(textPRN.getText().toString());
                         if (Double.parseDouble(result[0]) == svid) {
-                            this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
-                            this.spView.refreshCanvas();
+                            if(Double.parseDouble(result[3])>90) {
+                                this.spView2.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
+                                this.spView2.refreshCanvas();
+                            }
+                            else
+                            {
+                                this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
+                                 this.spView.refreshCanvas();
+
+                            }
                         }
 
                     }catch (NumberFormatException e)
                     {
-                        this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
-                        this.spView.refreshCanvas();
+                        if(Double.parseDouble(result[3])>90.0) {
+                            this.spView2.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
+                            this.spView2.refreshCanvas();
+                        }
+                        else
+                        {
+                            this.spView.addSatellite(Double.parseDouble(result[3]), Double.parseDouble(result[2]), Double.parseDouble(result[1]), true);
+                            this.spView.refreshCanvas();
+
+                        }
                     }
 
 

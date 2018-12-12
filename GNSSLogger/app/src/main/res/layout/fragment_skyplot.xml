@@ -14,9 +14,16 @@ android:orientation="vertical">
         android:layout_weight="1">
 
         <com.google.android.apps.location.gps.gnsslogger.SkyPlotView
+            android:id="@+id/spview2"
+            android:layout_width="212dp"
+            android:layout_height="233dp"
+
+            android:layout_marginTop="200dp" />
+
+        <com.google.android.apps.location.gps.gnsslogger.SkyPlotView
             android:id="@+id/spview"
-            android:layout_width="match_parent"
-            android:layout_height="327dp"
+            android:layout_width="216dp"
+            android:layout_height="209dp"
 
             />
 
