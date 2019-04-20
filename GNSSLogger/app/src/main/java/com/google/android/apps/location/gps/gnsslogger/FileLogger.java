@@ -399,15 +399,18 @@ public class FileLogger implements GnssListener {
 
   public int time2an(long btime){
     int angle = 0;
+    double c = 0;
+    double step = 360/17;
     double d = (double) btime;
     d = d/1000;
     int i = (int) Math.round(d);
-    if ((i%20)>10){
-      angle = 360 -(i%10)*40;
+    if ((i%34)>=17){
+      c = 357 - step - ((i%17)*step);
     }
     else{
-      angle = 40*(i%10);
+      c =step*(i%17);
     }
+    angle = (int) Math.round(c);
     return angle;
   }
 
@@ -416,8 +419,8 @@ public class FileLogger implements GnssListener {
     double d = (double) btime;
     d = d/1000;
     int i = (int) Math.round(d);
-    i = i/10;
-    angle = 36*i;
+    i = i/17;
+    angle = 12*i;
 /*    angle = (sint/18)*20;*/
 
 
